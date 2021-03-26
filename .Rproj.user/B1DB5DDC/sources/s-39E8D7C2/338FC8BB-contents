@@ -1,0 +1,13 @@
+#time check based on start end time
+time_check <- function(df, time_limit){
+  df <- df %>% mutate(start = ymd_hms(start), end = ymd_hms(end),
+                      interview_duration = difftime(as.POSIXct(end), as.POSIXct(start), units = "mins"),
+                      time_validity = case_when( 
+                        interview_duration < time_limit ~ "Deleted",
+                        interview_duration >= time_limit ~ "Valid"
+                        
+                      )
+  )
+  return(df)
+}
+

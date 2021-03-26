@@ -1,0 +1,77 @@
+---
+title: "REACH Burkina Faso - MSNA 2020 - Suivi"
+output: html_document
+css: "style.css"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = FALSE,comment = NA, message = FALSE, warning=FALSE, error=FALSE, fig.align = 'center' )
+
+```
+```{r  include=FALSE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
+
+library(formattable)
+
+source("suivi.R")
+```
+
+<center> **Data Collection Monitoring Report** </center>
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## Progrès par Region et Province
+
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+as.datatable(formattable(progres_admin2, list(
+  
+  n_enquetes_ch = color_bar("lightblue"),
+  pc_complet = color_tile("#EE5859", "#A5C9A1"))), 
+  options = list(pageLength = 50), rownames = FALSE)
+
+
+```
+
+## Problemes comuns
+
+### Dans la derniere semaine
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+as.datatable(formattable(problemes_comun_recents, list(
+  
+  nombre = color_tile("#FEF2F2", "#F06E6F"))), 
+  options = list(pageLength = 50, dom = 't'), rownames = FALSE)
+
+
+```
+
+
+### Depuis le debut de la collection
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+as.datatable(formattable(problemes_comun, list(
+  
+  nombre = color_tile("#FEF2F2", "#F06E6F"))), 
+  options = list(pageLength = 50, dom = 't'), rownames = FALSE)
+
+
+```
+
+
+## Productivité Enumerateur
+
+### Nombre enquetes et moyenne temps
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+as.datatable(formattable(temps_enumerateur, list(
+  
+  n_enquetes_ch = color_bar("lightblue"),
+  moy_temps = color_tile("lightpink", "lightblue"))), 
+   rownames = FALSE)
+
+
+```

@@ -1,0 +1,59 @@
+---
+title: "<center> REACH Burkina Faso - MSNA 2020 - Suivi </center>"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = FALSE,comment = NA, message = FALSE, warning=FALSE, fig.align = 'center' )
+```
+
+
+
+```{r include = F}
+
+library(lubridate)
+library(kableExtra)
+library(knitr)
+library(readr)
+library(readxl)
+library(openxlsx)
+library(sf)
+library(raster)
+library(leaflet)
+library(htmltools)
+library(tidyr)
+library(dplyr)
+library(plotly)
+
+# script de fonctions
+source("R/functions.R")
+
+# sisteme de coordonees
+WGS84 <- crs("+init=epsg:4326")
+
+# set min time and max # interviews per day
+time_limit <- 12
+flag_time_limit <- 25
+max_interv <- 10
+
+df <- read_excel("input/raw_data/MCNA_VIII_2020_-_latest_version_-_False_-_2020-09-10-08-17-09.xlsx", sheet = "MCNA_VIII_2020")
+```
+
+
+
+```{r, echo=FALSE}
+
+
+```
+
+
