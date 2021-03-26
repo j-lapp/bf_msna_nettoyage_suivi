@@ -4,4 +4,11 @@
 .Ruserdata
 
 # input
-/input/*
+/input/*.xlsx
+
+/input/donnees_brutes/*.xlsx
+
+# input
+input/*.xlsx
+
+input/donnees_brutes/*.xlsx
