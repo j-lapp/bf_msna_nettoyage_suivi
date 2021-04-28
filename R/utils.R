@@ -1,3 +1,14 @@
+supp_accents <- function (string) {
+  
+  unwanted_array <-  list(    'À'='A', 'Á'='A', 'Â'='A', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Ç'='C', 'È'='E', 'É'='E',
+                              'Ê'='E', 'Ë'='E','à'='a', 'á'='a', 'â'='a', 'ã'='a', 'ä'='a', 'å'='a', 'ç'='c',
+                              'è'='e', 'é'='e', 'ê'='e', "ï" = "i", "ô" = "o")
+  
+  removed_accents <- gsubfn(paste(names(unwanted_array),collapse='|'), unwanted_array,string)
+  
+  return(removed_accents)
+}
+
 latin_to_utf8<-function(x, from="latin1", to="UTF-8"){Encoding(x) <- from;iconv(x, from, to,sub='')}
 
 remove_blank_headings<-function(data){data[,names(data)!=""]}

@@ -1,0 +1,17 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# input
+/input/*.xlsx
+/*.xlsx
+*.xlsx
+
+
+/input/donnees_brutes/*.xlsx
+
+# input
+input/*.xlsx
+
+input/donnees_brutes/*.xlsx

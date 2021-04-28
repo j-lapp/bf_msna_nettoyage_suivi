@@ -1,5 +1,6 @@
 ---
-title: "REACH Burkina Faso - MSNA 2020 - Suivi"
+title: "MSNA 2020<h3>REACH Burkina Faso</h3><h5>Rapport quotidien de collection des donnees</h5>"
+
 output: html_document
 css: "style.css"
 ---
@@ -16,30 +17,140 @@ css: "style.css"
 knitr::opts_chunk$set(echo = FALSE, cache = FALSE,comment = NA, message = FALSE, warning=FALSE, error=FALSE, fig.align = 'center' )
 
 ```
+
 ```{r  include=FALSE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 
-library(formattable)
-
 source("suivi.R")
+source("R/color_vars.R")
+
 ```
-
-<center> **Data Collection Monitoring Report** </center>
-
+  
 #  {.tabset .tabset-fade .tabset-pills}
 
-## Progrès par Region et Province
+## Progression<br>globale
+
+
+
+### **Chronogramme de l'évaluation**
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+graph_temps <-  hchart(n_par_jour, 
+                       "line", 
+                       hcaes(x = today, y = n, group = group_pop),
+                       color = c("#D1D3D4", "#f5a6a7","#58585A", "#EE5859", "#bf4749", "#F69E61", "#D2CBB8"))
+
+graph_temps
+```
+
+
+
+### **Quantite des enquetes PDI par region**
+#### graphiqe bar
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+
+bar <- hchart(
+  nombre_admin1_pdi, 
+  "bar",
+  hcaes(x = admin1, y = n_enquetes_pdi),
+  color = reach_gris,
+  name = "PDI",
+  showInLegend = c(TRUE) # only show the first one in the legend
+  )
+
+bar
+```
+
+### **Modalite des enquetes par region**
+```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
+  
+  as.datatable(formattable(nombre_modalite, list()), 
+  options = list(pageLength = 50), rownames = FALSE)
+
+```
+
+
+### **Carte de progression des enquetes CH contre l'echantillon**
+
+```{r eval=TRUE, echo=FALSE, include= FALSE}
+library(sf)
+library(leaflet)
+
+admin2_simple <- sf::st_read("input/donnees_spatiales/admin2_simple.geojson")
+admin1_simple <- sf::st_read("input/donnees_spatiales/admin1_simple.geojson")
+admin1_lignes <- sf::st_cast(admin1_simple, "MULTILINESTRING")
+
+# prends le controid de couche de admin1
+bfa_admin1_centroid <- st_centroid(admin1_simple)
+
+
+admin2_progression <- left_join(admin2_simple, progres_admin2, by = c("ADM2_FR" = "admin2"))
+
+# palette
+ch_pal <- colorNumeric(
+  palette = colorRampPalette(c('#F06E6F', '#ffffbf', '#72966E'))(length(admin2_progression$pc_complet)),
+  domain = admin2_progression$pc_complet)
+
+# tooltip
+ch_carte_tooltip <- sprintf(
+  '<strong><span style="font-size: 12px; color: #58585A;font-family:Arial;">%s </span><br><span style="font-size: 10px; color: #58585A;"> %s </strong></span><br>
+  <span style="font-size: 10px; color: #58585A;font-family:Arial;">%s percent complete</span><br>',
+  admin2_progression$ADM2_FR_propre, admin2_progression$ADM1_FR_propre, admin2_progression$pc_complet)%>% 
+  lapply(htmltools::HTML)
+```
+
+```{r eval=TRUE, echo=FALSE, results='asis'}
+
+# carte
+ch_carte <- leaflet(option=leafletOptions(zoomControl=FALSE,doubleClickZoom= TRUE,zoomSnap = 0.01),width = "100%", height = "600px") %>% 
+  addPolygons(
+    data = admin2_progression,
+    color = blanc,
+    fillColor =  ~ ch_pal(pc_complet),
+    label = ch_carte_tooltip,
+    weight = 0.2,
+    smoothFactor = 0.5,
+    opacity = 1,
+    fillOpacity = 1,
+    highlightOptions = highlightOptions(fillColor= blanc,
+                                        fillOpacity = 0.5,
+                                        color= blanc,
+                                        weight = 1.4,
+                                        bringToFront = F)
+  ) %>% 
+  addPolylines(data=admin1_lignes,
+             color = reach_gris,
+             weight = 1.1,
+             opacity = 1.0,
+             options = list(zIndex = 300)) %>% 
+  addLabelOnlyMarkers(
+    data  = bfa_admin1_centroid,
+    label = bfa_admin1_centroid$ADM1_FR, # c'est l'atribut utilisee pour creer des etiquetes
+    labelOptions = labelOptions(noHide    = T,
+                                direction = 'center',
+                                textOnly  = T,
+                                style     = list(
+                                  "text-shadow" = sprintf("-1px 0 %s, 0 1px %s, 1px 0 %s, 0 -1px %s, 0 0 7px %s", blanc, blanc, blanc, blanc, blanc),
+                                  "padding"     = "3px 8px",
+                                  "font-family" = "Arial"))
+  )
+
+
+ch_carte
+```
+
+
+## Progression contre<br>echantillon - CH
+
 
 ```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
 as.datatable(formattable(progres_admin2, list(
   
-  n_enquetes_ch = color_bar("lightblue"),
-  pc_complet = color_tile("#EE5859", "#A5C9A1"))), 
+  n_enquetes_ch = color_bar("#D2CBB8"),
+  pc_complet = color_tile("#FEF2F2", "#F06E6F"))), 
   options = list(pageLength = 50), rownames = FALSE)
-
 
 ```
 
-## Problemes comuns
+## Problemes<br> comuns
 
 ### Dans la derniere semaine
 ```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
@@ -57,21 +168,22 @@ as.datatable(formattable(problemes_comun_recents, list(
 as.datatable(formattable(problemes_comun, list(
   
   nombre = color_tile("#FEF2F2", "#F06E6F"))), 
-  options = list(pageLength = 50, dom = 't'), rownames = FALSE)
+  options = list(pageLength = 50, dom = 't'), 
+  rownames = FALSE)
 
 
 ```
 
-
-## Productivité Enumerateur
+## Productivité<br> Enumerateur
 
 ### Nombre enquetes et moyenne temps
 ```{r eval=TRUE, echo=FALSE, results='asis', warning=FALSE, message=FALSE, error=FALSE}
 as.datatable(formattable(temps_enumerateur, list(
   
-  n_enquetes_ch = color_bar("lightblue"),
-  moy_temps = color_tile("lightpink", "lightblue"))), 
-   rownames = FALSE)
+  n_enquetes_ch = color_bar("#D2CBB8"),
+  moy_temps = color_tile("#ef6d6f","#f5a6a7"))), 
+  options = list(pageLength = 50),
+  rownames = FALSE)
 
 
 ```
